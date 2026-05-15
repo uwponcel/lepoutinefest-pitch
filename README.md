@@ -30,7 +30,7 @@ This project is set up to deploy on Railway as a static site served via the `ser
 
 1. Push this repo to GitHub (private or public, doesn't matter).
 2. Railway dashboard → **New Project** → **Deploy from GitHub repo** → pick this repo.
-3. Railway auto-detects Node via `package.json` + `nixpacks.toml`:
+3. Railway auto-detects Node via `package.json` (Railpack builder):
    - Install: `npm install`
    - Start: `npm start` (runs `serve . -l tcp://0.0.0.0:$PORT --single`)
 4. Railway assigns a public URL like `lepoutinefest-pitch.up.railway.app` once the deploy is green.
