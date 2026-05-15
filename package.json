@@ -1,0 +1,16 @@
+{
+  "name": "lepoutinefest-pitch",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Pitch mockup site for LePoutineFest et Ramen T Fest, Saint-Jérôme. Static single-page React + Babel via CDN — no build step.",
+  "scripts": {
+    "dev": "serve . -l 5173 --no-clipboard --single",
+    "start": "serve . -l tcp://0.0.0.0:${PORT:-3000} --no-clipboard --single"
+  },
+  "dependencies": {
+    "serve": "^14.2.4"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

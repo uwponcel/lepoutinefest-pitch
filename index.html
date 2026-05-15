@@ -1,0 +1,1200 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>LePoutineFest et Ramen T Fest — Saint-Jérôme</title>
+<link rel="icon" type="image/svg+xml" href="./assets/favicon.svg" />
+<meta name="theme-color" content="#0A0A0A" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink: '#0A0A0A',
+          paper: '#F5F5F0',
+          mute: '#9A9A92',
+          neon: '#A8FF35',
+        },
+        fontFamily: {
+          display: ['Anton', 'Impact', 'system-ui', 'sans-serif'],
+          body: ['Inter', 'system-ui', 'sans-serif'],
+          marker: ['"Permanent Marker"', 'cursive'],
+          mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+        },
+      },
+    },
+  };
+</script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;500;600;700&family=Permanent+Marker&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  html, body { background: #0A0A0A; color: #F5F5F0; font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  body { overflow-x: hidden; }
+  ::selection { background: #A8FF35; color: #0A0A0A; }
+
+  .font-display { font-family: 'Anton', Impact, sans-serif; letter-spacing: 0.01em; }
+  .font-marker  { font-family: 'Permanent Marker', cursive; }
+  .font-mono    { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+
+  /* grain overlay */
+  .grain::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.18 0'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.55'/></svg>");
+    mix-blend-mode: overlay;
+    opacity: 0.35;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* neon glow utility */
+  .glow-neon { box-shadow: 0 0 0 1px rgba(168,255,53,0.6), 0 0 22px rgba(168,255,53,0.45), 0 0 60px rgba(168,255,53,0.18); }
+  .text-glow { text-shadow: 0 0 14px rgba(168,255,53,0.55), 0 0 38px rgba(168,255,53,0.25); }
+  .ring-neon { box-shadow: inset 0 0 0 1.5px #A8FF35; }
+
+  /* hero pulsing radial */
+  @keyframes pulseGlow {
+    0%, 100% { opacity: 0.55; transform: scale(1); }
+    50%      { opacity: 0.85; transform: scale(1.06); }
+  }
+  .hero-glow {
+    position: absolute;
+    top: -20%; right: -15%;
+    width: 85vmin; height: 85vmin;
+    background: radial-gradient(closest-side, rgba(168,255,53,0.55), rgba(168,255,53,0.18) 45%, rgba(168,255,53,0) 70%);
+    filter: blur(8px);
+    animation: pulseGlow 6.5s ease-in-out infinite;
+    pointer-events: none;
+  }
+  .hero-glow-2 {
+    position: absolute;
+    bottom: -30%; left: -10%;
+    width: 60vmin; height: 60vmin;
+    background: radial-gradient(closest-side, rgba(168,255,53,0.25), rgba(168,255,53,0) 70%);
+    filter: blur(20px);
+    animation: pulseGlow 9s ease-in-out infinite;
+    animation-delay: -2s;
+    pointer-events: none;
+  }
+
+  /* entrance */
+  .reveal { opacity: 0; transform: translateY(28px); transition: opacity .9s cubic-bezier(.2,.7,.2,1), transform .9s cubic-bezier(.2,.7,.2,1); }
+  .reveal.in { opacity: 1; transform: none; }
+
+  /* letter stagger */
+  .letter { display: inline-block; opacity: 0; transform: translateY(40px) rotate(-6deg); transition: opacity .7s, transform .7s cubic-bezier(.2,.7,.2,1); }
+  .letter.in { opacity: 1; transform: translateY(0) rotate(0); }
+
+  /* outline text (the second word in hero) */
+  .text-outline {
+    color: transparent;
+    -webkit-text-stroke: 2px #F5F5F0;
+  }
+
+  /* menu row */
+  .menu-row { border-top: 1px solid rgba(245,245,240,0.10); }
+  .menu-row:last-child { border-bottom: 1px solid rgba(245,245,240,0.10); }
+  .menu-row .row-grid { display: grid; grid-template-columns: 1fr auto; gap: 1.5rem; align-items: baseline; padding: 1.25rem 0; cursor: pointer; }
+  @media (min-width: 768px) {
+    .menu-row .row-grid { padding: 1.5rem 0; }
+  }
+  .menu-row .row-photo {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height .55s cubic-bezier(.2,.7,.2,1), margin .55s, opacity .4s;
+    opacity: 0;
+  }
+  .menu-row.open .row-photo {
+    max-height: 360px;
+    opacity: 1;
+    margin-bottom: 1.5rem;
+  }
+  .menu-row:hover .name { color: #A8FF35; }
+
+  /* tag chips */
+  .chip { display: inline-flex; align-items: center; padding: 2px 8px; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; border-radius: 2px; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+  .chip-vg { color: #A8FF35; border: 1px solid #A8FF35; }
+  .chip-gf { color: #F5F5F0; border: 1px solid #F5F5F0; }
+  .chip-spicy { color: #FF7A35; border: 1px solid #FF7A35; }
+
+  /* tab underline */
+  .tab-active::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: -10px;
+    height: 2px; background: #A8FF35; box-shadow: 0 0 12px rgba(168,255,53,0.7);
+  }
+
+  /* signature hairline between hero and sticky bar */
+  .hairline {
+    transform-origin: left center;
+    transform: scaleX(0);
+    transition: transform 1.2s cubic-bezier(.2,.7,.2,1) .15s;
+  }
+  .hairline.draw { transform: scaleX(1); }
+
+  /* photo placeholder */
+  .ph {
+    position: relative;
+    background:
+      repeating-linear-gradient(135deg, rgba(245,245,240,0.05) 0 8px, rgba(245,245,240,0) 8px 18px),
+      linear-gradient(135deg, #1a1a17 0%, #0d0d0c 100%);
+    overflow: hidden;
+  }
+  .ph::after {
+    content: attr(data-label);
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: rgba(245,245,240,0.32);
+    text-align: center;
+    padding: 12px;
+  }
+
+  /* graffiti frame */
+  .graffiti-frame {
+    position: relative;
+  }
+  .graffiti-frame::before {
+    content: '';
+    position: absolute;
+    inset: -14px -10px -10px -14px;
+    border: 2px solid #A8FF35;
+    transform: rotate(-1.2deg);
+    pointer-events: none;
+    box-shadow: 0 0 22px rgba(168,255,53,0.35);
+  }
+  .graffiti-frame::after {
+    content: '';
+    position: absolute;
+    inset: -6px -16px -16px -6px;
+    border: 1px solid rgba(168,255,53,0.45);
+    transform: rotate(1.4deg);
+    pointer-events: none;
+  }
+
+  /* button */
+  .btn-neon {
+    background: #A8FF35; color: #0A0A0A;
+    box-shadow: 0 0 0 1px #A8FF35, 0 0 22px rgba(168,255,53,0.55), 0 0 60px rgba(168,255,53,0.18);
+    transition: transform .15s ease, box-shadow .2s ease;
+  }
+  .btn-neon:hover { transform: translateY(-2px); box-shadow: 0 0 0 1px #A8FF35, 0 0 32px rgba(168,255,53,0.75), 0 0 80px rgba(168,255,53,0.30); }
+  .btn-ghost {
+    color: #F5F5F0; border: 1.5px solid #F5F5F0;
+    transition: background .2s, color .2s;
+  }
+  .btn-ghost:hover { background: #F5F5F0; color: #0A0A0A; }
+
+  /* parallax target */
+  .parallax { will-change: transform; }
+
+  /* scroll-snap quote bar */
+  .quote-bar { border-left: 4px solid #A8FF35; box-shadow: -10px 0 24px -16px rgba(168,255,53,0.65); }
+
+  /* underline for sticky bar */
+  .sticky-underline { box-shadow: inset 0 -2px 0 0 #A8FF35; }
+
+  /* hover ring for gallery */
+  .gallery-tile { transition: transform .5s cubic-bezier(.2,.7,.2,1); }
+  .gallery-tile:hover { transform: translateY(-4px); }
+
+  /* misc */
+  .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: .26em; text-transform: uppercase; color: #A8FF35; }
+  .rule { height: 1px; background: linear-gradient(to right, transparent, rgba(245,245,240,0.18), transparent); }
+
+  /* hide scrollbar for tab bar on mobile */
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* rotate display badge */
+  .badge-rot { transform: rotate(-7deg); }
+
+  /* ── graffiti ribbons / splash backgrounds ────────────────────
+     Uses an SVG turbulence + displacement filter (defined inline
+     in #graf-defs at the document root) to give a green rectangle
+     organic, torn-edge "spray paint" outlines like the menu
+     boards. Each variant tunes seed + scale for visual variety. */
+  .ribbon {
+    position: relative;
+    display: inline-block;
+    padding: 6px 22px 8px;
+    color: #0A0A0A;
+    transform: rotate(-1.4deg);
+  }
+  .ribbon::before {
+    content: '';
+    position: absolute;
+    inset: -2px -10px;
+    background: #A8FF35;
+    filter: url(#graf-rough);
+    z-index: 0;
+  }
+  .ribbon > * { position: relative; z-index: 1; }
+
+  .ribbon--alt::before { filter: url(#graf-rough-2); }
+  .ribbon--tilt-r { transform: rotate(1.2deg); }
+  .ribbon--tilt-r::before { filter: url(#graf-rough-3); }
+
+  /* hand-painted brush underline below section heads */
+  .brush-underline {
+    position: relative;
+    display: inline-block;
+  }
+  .brush-underline::after {
+    content: '';
+    position: absolute;
+    left: -6px;
+    right: -6px;
+    bottom: -10px;
+    height: 14px;
+    background: #A8FF35;
+    filter: url(#graf-brush);
+    opacity: 0.95;
+  }
+
+  /* corner splatter accents */
+  .splatter {
+    position: absolute;
+    background: #A8FF35;
+    filter: url(#graf-splash);
+    opacity: 0.55;
+    pointer-events: none;
+  }
+
+  /* ── Hero backdrop — generated graffiti wall ─────────────────
+     Sits beneath the radial glow + grain layers so the green
+     spray-paint accents read as a halo around the content, not
+     a competing surface. Dimmed via opacity + brightness so the
+     typo (especially the neon POUTINE) stays the lead element. */
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background: url('./assets/bg-punk.jpg') center/cover no-repeat;
+    opacity: 0.72;
+    filter: brightness(0.92) contrast(1.05);
+    pointer-events: none;
+    z-index: 0;
+    /* Soft bottom bleed → dissolves into the next section's ink
+       instead of cutting on a hard horizontal line. */
+    -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 68%, rgba(0,0,0,0.4) 88%, transparent 100%);
+            mask-image: linear-gradient(to bottom, #000 0%, #000 68%, rgba(0,0,0,0.4) 88%, transparent 100%);
+  }
+  /* Soft vignette over the bg so center stays readable */
+  .hero-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 70% 60% at 50% 55%, rgba(10,10,10,0.45) 0%, rgba(10,10,10,0) 70%);
+    pointer-events: none;
+  }
+
+  /* ── Pourquoi backdrop (mid-density splatter) ───────────────
+     Dimmer than hero so stats readability wins. Vignette pulls
+     focus to the central row. */
+  .section-bg-mid {
+    position: absolute;
+    inset: 0;
+    background: url('./assets/alt/bg-punk-mid.jpg') center/cover no-repeat;
+    opacity: 0.38;
+    filter: brightness(0.85) contrast(1.05) saturate(0.92);
+    pointer-events: none;
+    /* Fade both edges → blends into the neighbouring clean sections */
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 8%, #000 22%, #000 78%, rgba(0,0,0,0.5) 92%, transparent 100%);
+            mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 8%, #000 22%, #000 78%, rgba(0,0,0,0.5) 92%, transparent 100%);
+  }
+  .section-bg-mid::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 75% 65% at 50% 50%, rgba(10,10,10,0.55) 0%, rgba(10,10,10,0) 72%);
+    pointer-events: none;
+  }
+
+  /* ── Footer backdrop (hero image flipped for mirror closure) ─
+     Slightly stronger opacity than Pourquoi since footer is
+     closure — visual punctuation. */
+  .footer-bg {
+    position: absolute;
+    inset: 0;
+    background: url('./assets/bg-punk.jpg') center/cover no-repeat;
+    opacity: 0.42;
+    filter: brightness(0.88) contrast(1.04);
+    transform: scaleX(-1);
+    pointer-events: none;
+    /* Fade top edge → emerges from the previous section's ink */
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 10%, #000 28%, #000 100%);
+            mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 10%, #000 28%, #000 100%);
+  }
+  .footer-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(10,10,10,0.35) 0%, rgba(10,10,10,0) 35%, rgba(10,10,10,0) 75%, rgba(10,10,10,0.55) 100%);
+    pointer-events: none;
+  }
+</style>
+</head>
+<body class="bg-ink text-paper font-body">
+<!-- Shared SVG filter defs for graffiti ribbons + brush strokes.
+     Lives at document root so any element can reference url(#id). -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <filter id="graf-rough" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="2" seed="3" />
+      <feDisplacementMap in="SourceGraphic" scale="7" />
+    </filter>
+    <filter id="graf-rough-2" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="2" seed="7" />
+      <feDisplacementMap in="SourceGraphic" scale="6" />
+    </filter>
+    <filter id="graf-rough-3" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.07" numOctaves="3" seed="11" />
+      <feDisplacementMap in="SourceGraphic" scale="8" />
+    </filter>
+    <filter id="graf-brush" x="-5%" y="-30%" width="110%" height="160%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9 0.05" numOctaves="2" seed="4" />
+      <feDisplacementMap in="SourceGraphic" scale="6" />
+    </filter>
+    <filter id="graf-splash" x="-30%" y="-30%" width="160%" height="160%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.12" numOctaves="3" seed="9" />
+      <feDisplacementMap in="SourceGraphic" scale="22" />
+    </filter>
+  </defs>
+</svg>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" data-presets="env,react">
+const { useState, useEffect, useRef, useMemo } = React;
+
+/* -------------------- DATA -------------------- */
+
+const POUTINES_INCONTOURNABLES = [
+  { name: 'GALVAUDE',     desc: 'Poulet et petits pois',                          p: '14.79', g: '19.13' },
+  { name: 'ALLDRESS',     desc: 'Bacon, oignons, champignons, piments',           p: '14.79', g: '19.13' },
+  { name: 'INFERNO',      desc: 'Sauce forte et variétés de piments forts',       p: '14.79', g: '19.13', tags: ['spicy'] },
+  { name: 'ITALIENNE',    desc: 'Sauce spaghetti',                                p: '14.79', g: '19.13' },
+  { name: 'VIANDE FUMÉE', desc: 'Smoked meat',                                    p: '14.79', g: '19.13' },
+  { name: 'PORC EFFILOCHÉ', desc: 'Pulled pork maison',                           p: '14.79', g: '19.13' },
+  { name: 'PARASOL',      desc: 'Viande hachée, oignons et piments',              p: '14.79', g: '19.13' },
+  { name: 'STEAK',        desc: 'Steak ribeye et sauce poivrée',                  p: '14.79', g: '19.13' },
+];
+
+const POUTINES_EXTRA = [
+  { name: 'PORKY',          desc: 'Porc effiloché et bacon',                                       p: '17.40', g: '21.74' },
+  { name: 'THAÏ',           desc: 'Choix poulet en lanière ou poulet pané +1$, sauce thaï, sésames, échalotes', p: '17.40', g: '21.74' },
+  { name: 'CABANE',         desc: 'Bacon, saucisse italienne douce, sirop d\u2019érable',         p: '17.40', g: '21.74' },
+  { name: 'HAMBURGER STEAK',desc: 'Bœuf haché, bacon, oignons, champignons',                       p: '17.40', g: '21.74' },
+  { name: 'J\u2019PHIL STEAK', desc: 'Steak ribeye, piments, oignons, fromage, sauce poivre',     p: '17.40', g: '21.74' },
+  { name: 'LA COCHONNE',    desc: 'Bacon, saucisse italienne, porc effiloché',                     g: '21.74', fam: '26.09' },
+];
+
+const RAMENS = [
+  { num: '#1',   name: 'CLASSIQUE',    desc: 'Nouilles et bouillon',                                                                  price: '6.96' },
+  { num: '#1.5', name: 'LE PROTÉINÉ',  desc: 'Échalotes + choix de dumpling, poulet popcorn, 2 œufs ou 2x tofu',                      price: '11.30' },
+  { num: '#2',   name: 'TONKOSU',      desc: 'Poulet popcorn, échalotes, fèves germées, œuf',                                          price: '13.92' },
+  { num: '#3',   name: 'VEGGIE',       desc: 'Champignons, échalotes, fèves germées, carottes, maïs, tofu, algue', price: '13.92', tags: ['vg'] },
+  { num: '#4',   name: 'DUMPLING',     desc: 'Dumpling frit, fèves germées, échalotes, maïs, carottes',                                price: '13.92' },
+  { num: '#5',   name: 'CHARSIO',      desc: 'Porc effiloché, fèves germées, champignons, échalotes, algue, œuf',                      price: '15.66' },
+  { num: '',     name: 'LE COCHON',    desc: 'Poulet popcorn, porc effiloché, dumpling, œuf, échalotes, fèves germées, maïs, champignons', price: '20.00' },
+  { num: '',     name: 'RAMAGETTI',    desc: 'Nouilles ramen, sauce spaghetti, fromage en grain',                                       price: '12.18' },
+];
+
+const SUBS = [
+  { name: 'BLT',             desc: 'Bacon, laitue, tomate, mayo',                                price: '10.00' },
+  { name: 'CLUB',            desc: 'Poulet en lanière ou popcorn',                              priceA: 'Lanière 11.74', priceB: 'Popcorn 14.35' },
+  { name: 'CÉSAR',           desc: 'Poulet, bacon, croûtons, parmesan',                          priceA: 'Lanière 12.61', priceB: 'Popcorn 14.35' },
+  { name: 'PHILLY\u2019S STEAK', desc: 'Émincé de ribeye, provolone, sauce poivrée',           price: '16.09' },
+  { name: 'GUÉDILLE BACON',  desc: 'Bacon, oignons, champignons, fromage, sauce cajun',         price: '11.74' },
+  { name: 'FRITE SAUCE',     desc: 'La classique. Petite ou grande.',                            priceA: 'Petite 6.96', priceB: 'Grande 10.44' },
+];
+
+/* -------------------- HOOKS -------------------- */
+
+function useInView(options = { threshold: 0.18 }) {
+  const ref = useRef(null);
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) {
+        setInView(true);
+        io.disconnect();
+      }
+    }, options);
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  return [ref, inView];
+}
+
+function useScrollY() {
+  const [y, setY] = useState(0);
+  useEffect(() => {
+    let raf = 0;
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        setY(window.scrollY);
+        raf = 0;
+      });
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+  return y;
+}
+
+/* -------------------- ATOMIC BITS -------------------- */
+
+function Reveal({ children, delay = 0, className = '', as: As = 'div' }) {
+  const [ref, inView] = useInView();
+  return (
+    <As ref={ref}
+        className={`reveal ${inView ? 'in' : ''} ${className}`}
+        style={{ transitionDelay: `${delay}ms` }}>
+      {children}
+    </As>
+  );
+}
+
+function Eyebrow({ children }) {
+  return <div className="eyebrow">{children}</div>;
+}
+
+function Tag({ kind }) {
+  if (kind === 'vg')    return <span className="chip chip-vg">VG</span>;
+  if (kind === 'gf')    return <span className="chip chip-gf">GF</span>;
+  if (kind === 'spicy') return <span className="chip chip-spicy">🔥 Fort</span>;
+  return null;
+}
+
+function Photo({ label, className = '', ratio = '4/3' }) {
+  return <div className={`ph ${className}`} style={{ aspectRatio: ratio }} data-label={label}></div>;
+}
+
+/* Lime-green torn-edge banner behind text — mimics the spray-painted
+   section headers on the original menu boards (LES INCONTOURNABLES,
+   LES EXTRAVAGANTS, etc.). Variant alters rotation + filter seed for
+   visual variety when stacked. */
+function Ribbon({ children, variant = 'a', className = '' }) {
+  const cls = variant === 'b' ? 'ribbon ribbon--tilt-r' :
+              variant === 'c' ? 'ribbon ribbon--alt' :
+                                 'ribbon';
+  return <span className={`${cls} ${className}`}><span>{children}</span></span>;
+}
+
+/* Hand-painted neon brush stroke under an element (eyebrow / heading).
+   Children render normally; the stroke sits 10px below baseline. */
+function BrushUnderline({ children, className = '' }) {
+  return <span className={`brush-underline ${className}`}>{children}</span>;
+}
+
+/* -------------------- HERO -------------------- */
+
+function Hero({ onTriggerHairline }) {
+  const word1 = 'POUTINE';
+  const word2 = 'RAMEN';
+
+  // letter stagger using mount delay
+  return (
+    <section data-screen-label="01 Hero" className="relative min-h-screen overflow-hidden grain">
+      <div className="hero-bg"></div>
+      <div className="hero-glow"></div>
+      <div className="hero-glow-2"></div>
+
+      {/* top nav */}
+      <header className="relative z-10 max-w-[1400px] mx-auto px-6 md:px-12 pt-6 md:pt-8 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 bg-neon rotate-[-8deg] grid place-items-center">
+            <span className="font-display text-ink text-lg leading-none translate-y-[1px]">P</span>
+          </div>
+          <span className="font-display text-paper text-xl tracking-wider">LEPOUTINEFEST <span className="text-neon">·</span> RAMEN T FEST</span>
+        </div>
+        <nav className="hidden md:flex items-center gap-8 text-sm text-mute">
+          <a href="#histoire" className="hover:text-paper transition-colors">Histoire</a>
+          <a href="#menu" className="hover:text-paper transition-colors">Menu</a>
+          <a href="#galerie" className="hover:text-paper transition-colors">Galerie</a>
+          <a href="#visite" className="hover:text-paper transition-colors">Visite</a>
+          <a href="#visite" className="px-4 py-2 border border-paper/40 hover:border-neon hover:text-neon transition-colors text-paper">Itinéraire</a>
+        </nav>
+      </header>
+
+      <div className="relative z-10 max-w-[1400px] mx-auto px-6 md:px-12 pt-10 md:pt-20 pb-32">
+        <div className="font-mono text-xs tracking-[0.3em] text-neon mb-6 md:mb-10">EST. 2026 — ST-JÉRÔME, QC · OUVERT TOUS LES JOURS</div>
+
+        <h1 className="font-display leading-[0.78] uppercase select-none">
+          <StaggeredWord word={word1}
+            className="block text-[22vw] md:text-[15vw] text-neon text-glow"
+            rotateClass="rotate-[-3deg]"
+          />
+          <StaggeredWord word={word2}
+            className="block text-[22vw] md:text-[15vw] text-outline -mt-[2vw] md:-mt-[1vw]"
+            rotateClass="rotate-[2deg]"
+            baseDelay={500}
+          />
+        </h1>
+
+        <div className="mt-6 md:mt-10 grid md:grid-cols-[1fr_auto] gap-8 items-end">
+          <Reveal delay={1200} className="max-w-xl">
+            <p className="text-paper/90 text-lg md:text-2xl leading-snug">
+              <span className="italic text-mute">Food truck-style.</span> Maintenant à St-Jérôme.
+              <span className="block mt-2 text-sm text-mute font-mono">Cinq ans dans les Laurentides. Une cuisine permanente.</span>
+            </p>
+          </Reveal>
+
+          <Reveal delay={1400} className="flex flex-wrap items-center gap-3">
+            <a href="#menu" className="btn-neon px-6 py-3 font-display tracking-widest text-base">VOIR LE MENU →</a>
+            <a href="#visite" className="btn-ghost px-6 py-3 font-display tracking-widest text-base">NOUS TROUVER</a>
+          </Reveal>
+        </div>
+      </div>
+
+      {/* mono strip */}
+      <div className="absolute bottom-6 left-0 right-0 z-10 px-6 md:px-12">
+        <div className="max-w-[1400px] mx-auto flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-[11px] md:text-xs tracking-[0.22em] uppercase text-mute">
+          <span><span className="text-neon">●</span> 1000 Bd Lachapelle</span>
+          <span className="text-paper/30">/</span>
+          <span>Saint-Jérôme</span>
+          <span className="text-paper/30">/</span>
+          <span>Ouvert 7/7 · Ven-sam jusqu&rsquo;à 23h</span>
+          <span className="hidden md:inline text-paper/30">/</span>
+          <span className="hidden md:inline">Vegan & GF dispo</span>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function StaggeredWord({ word, className = '', rotateClass = '', baseDelay = 100 }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { const t = setTimeout(() => setMounted(true), 50); return () => clearTimeout(t); }, []);
+  return (
+    <span className={`${className} ${rotateClass}`}>
+      {word.split('').map((ch, i) => (
+        <span key={i}
+              className={`letter ${mounted ? 'in' : ''}`}
+              style={{ transitionDelay: `${baseDelay + i * 70}ms` }}>
+          {ch}
+        </span>
+      ))}
+    </span>
+  );
+}
+
+/* -------------------- HAIRLINE + STICKY BAR -------------------- */
+
+function HairlineDivider() {
+  const [ref, inView] = useInView({ threshold: 0.2 });
+  return (
+    <div ref={ref} className="relative h-[1px] w-full">
+      <div className={`hairline absolute inset-0 ${inView ? 'draw' : ''}`}
+           style={{
+             background: 'linear-gradient(to right, transparent 0%, #A8FF35 8%, #A8FF35 92%, transparent 100%)',
+             boxShadow: '0 0 14px rgba(168,255,53,0.65), 0 0 36px rgba(168,255,53,0.25)'
+           }}>
+      </div>
+    </div>
+  );
+}
+
+function StickyBar() {
+  const y = useScrollY();
+  const [winH, setWinH] = useState(0);
+  useEffect(() => {
+    const sync = () => setWinH(window.innerHeight);
+    sync();
+    window.addEventListener('resize', sync);
+    return () => window.removeEventListener('resize', sync);
+  }, []);
+  // Slides down from above once user scrolls past ~85 % of the hero,
+  // and slides back up when they return to the top.
+  const show = winH > 0 && y > winH * 0.85;
+  return (
+    <div className={`fixed top-0 left-0 right-0 z-30 bg-ink/95 backdrop-blur-sm border-b border-paper/10 transform transition-transform duration-500 ease-out ${show ? 'translate-y-0' : '-translate-y-full'}`}>
+      <div className="max-w-[1400px] mx-auto px-6 md:px-12 py-3 flex flex-wrap items-center gap-x-8 gap-y-2 font-mono text-[11px] md:text-xs uppercase tracking-[0.18em]">
+        <span className="text-neon">●</span>
+        <span><span className="text-mute">Adresse</span> <span className="sticky-underline">1000 Bd Lachapelle, St-Jérôme</span></span>
+        <span className="text-paper/20">|</span>
+        <span><span className="text-mute">Horaire</span> 11h — 21h · ven-sam 23h</span>
+        <span className="text-paper/20">|</span>
+        <span><span className="text-mute">Tél</span> 450&nbsp;000&nbsp;0000</span>
+        <span className="ml-auto hidden md:flex items-center gap-2">
+          <a href="#visite" className="text-paper hover:text-neon transition-colors">→ Google Maps</a>
+        </span>
+      </div>
+    </div>
+  );
+}
+
+/* -------------------- HISTOIRE -------------------- */
+
+function Histoire() {
+  return (
+    <section id="histoire" data-screen-label="03 Histoire" className="relative max-w-[1400px] mx-auto px-6 md:px-12 py-24 md:py-36">
+      <div className="grid md:grid-cols-[1.05fr_1fr] gap-12 md:gap-32 lg:gap-40 items-center">
+        <div className="md:pr-4">
+          <Reveal><Eyebrow>01 — Notre histoire</Eyebrow></Reveal>
+          <Reveal delay={120}>
+            <h2 className="mt-5 font-display text-[14vw] md:text-[5.4vw] leading-[0.92] uppercase">
+              On a roulé.<br/>
+              <span className="text-neon text-glow">Maintenant,</span><br/>
+              on reste.
+            </h2>
+          </Reveal>
+          <Reveal delay={300}>
+            <p className="mt-8 max-w-xl text-lg md:text-xl text-paper/85 leading-relaxed">
+              On a roulé en food truck 5 ans partout dans les Laurentides.
+              En 2026, on a posé nos chaudrons pour de bon au 1000 Lachapelle.
+              <span className="text-neon"> Même équipe, même recette,</span> plus de bouffe.
+            </p>
+          </Reveal>
+          <Reveal delay={450}>
+            <div className="mt-10 flex items-center gap-6 font-mono text-xs uppercase tracking-[0.18em] text-mute">
+              <span><span className="text-paper">5&nbsp;ans</span> en truck</span>
+              <span className="text-paper/20">·</span>
+              <span><span className="text-paper">2026</span> ouverture</span>
+              <span className="text-paper/20">·</span>
+              <span><span className="text-paper">3</span> familles</span>
+            </div>
+          </Reveal>
+        </div>
+
+        <Reveal delay={200}>
+          <div className="graffiti-frame">
+            <Photo label="PHOTO — équipe en cuisine / food truck d'origine" ratio="4/5" className="w-full" />
+            <div className="absolute -bottom-6 -left-2 md:-left-6 font-marker text-neon text-xl md:text-2xl badge-rot select-none">
+              depuis 2021 ✶
+            </div>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------- MENU -------------------- */
+
+function MenuRow({ item, idx, photoLabel }) {
+  const [open, setOpen] = useState(false);
+  const [ref, inView] = useInView({ threshold: 0.06 });
+  return (
+    <li ref={ref}
+        className={`menu-row reveal ${inView ? 'in' : ''} ${open ? 'open' : ''}`}
+        style={{ transitionDelay: `${idx * 60}ms` }}>
+      <div className="row-grid" onClick={() => setOpen(o => !o)}>
+        <div>
+          <div className="flex items-baseline gap-3 flex-wrap">
+            {item.num && <span className="font-marker text-neon text-xl md:text-2xl leading-none">{item.num}</span>}
+            <h4 className="name font-display text-3xl md:text-5xl uppercase leading-none transition-colors">{item.name}</h4>
+          </div>
+          <p className="mt-2 italic text-mute text-sm md:text-base max-w-2xl">{item.desc}</p>
+          {item.tags && (
+            <div className="mt-3 flex flex-wrap gap-2">
+              {item.tags.map(t => <Tag key={t} kind={t} />)}
+            </div>
+          )}
+        </div>
+        <div className="text-right font-marker text-neon leading-none whitespace-nowrap">
+          {item.price && <div className="text-2xl md:text-4xl">${item.price}</div>}
+          {(item.p || item.g || item.fam || item.priceA || item.priceB) && (
+            <div className="flex flex-col items-end gap-1">
+              {item.p && <div className="text-xl md:text-2xl">P <span className="text-neon">${item.p}</span></div>}
+              {item.g && <div className="text-xl md:text-2xl">G <span className="text-neon">${item.g}</span></div>}
+              {item.fam && <div className="text-xl md:text-2xl">Fam <span className="text-neon">${item.fam}</span></div>}
+              {item.priceA && <div className="text-base md:text-xl">{item.priceA}</div>}
+              {item.priceB && <div className="text-base md:text-xl">{item.priceB}</div>}
+            </div>
+          )}
+        </div>
+      </div>
+      <div className="row-photo grid md:grid-cols-[2fr_3fr] gap-6 items-start">
+        <Photo label={photoLabel} ratio="4/3" />
+        <div className="md:pt-2">
+          <div className="font-mono text-xs uppercase tracking-[0.2em] text-neon mb-3">Ingrédients clés</div>
+          <p className="text-paper/85 text-base leading-relaxed max-w-md">
+            {item.desc}. Servi avec frites maison, fromage en grain frais du jour, sauce brune mijotée en cuisine.
+          </p>
+          <div className="mt-4 flex flex-wrap gap-2 text-xs font-mono uppercase tracking-[0.16em] text-mute">
+            <span className="border border-paper/20 px-2 py-1">Fromage en grain frais</span>
+            <span className="border border-paper/20 px-2 py-1">Sauce maison</span>
+            <span className="border border-paper/20 px-2 py-1">Cuit minute</span>
+          </div>
+        </div>
+      </div>
+    </li>
+  );
+}
+
+function MenuTabs() {
+  const tabs = [
+    { id: 'poutines', label: 'Poutines' },
+    { id: 'ramens',   label: 'Ramens' },
+    { id: 'subs',     label: 'Subs & autres' },
+  ];
+  const [active, setActive] = useState('poutines');
+
+  return (
+    <section id="menu" data-screen-label="04 Menu" className="relative max-w-[1400px] mx-auto px-6 md:px-12 py-24 md:py-32">
+      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10 md:mb-16">
+        <div>
+          <Reveal><Eyebrow>02 — Le menu</Eyebrow></Reveal>
+          <Reveal delay={120}>
+            <h2 className="mt-5 font-display text-[14vw] md:text-[6.2vw] leading-[0.9] uppercase">
+              Tout est <span className="text-neon text-glow italic">fait</span><br/>
+              en cuisine.
+            </h2>
+          </Reveal>
+        </div>
+        <Reveal delay={200}>
+          <div className="max-w-xs md:ml-auto md:text-right">
+            <div className="eyebrow mb-5 md:text-right">Notre cuisine</div>
+            <ul className="space-y-3 text-paper/85 text-base leading-snug">
+              <li className="flex md:justify-end items-baseline gap-3">
+                <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-mute w-20 md:w-auto md:order-2 md:text-right shrink-0">Sauce</span>
+                <span className="md:order-1">mijotée minute</span>
+              </li>
+              <li className="flex md:justify-end items-baseline gap-3">
+                <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-mute w-20 md:w-auto md:order-2 md:text-right shrink-0">Fromage</span>
+                <span className="md:order-1">en grain, frais du jour</span>
+              </li>
+              <li className="flex md:justify-end items-baseline gap-3">
+                <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-mute w-20 md:w-auto md:order-2 md:text-right shrink-0">Bouillon</span>
+                <span className="md:order-1">
+                  <span className="font-marker text-neon text-2xl md:text-3xl mr-1">12&nbsp;h</span>
+                  d&rsquo;infusion
+                </span>
+              </li>
+            </ul>
+            <div className="mt-6 pt-5 border-t border-paper/10 font-mono text-[11px] uppercase tracking-[0.22em] text-neon">
+              Vegan &amp; sans gluten · majorité du menu
+            </div>
+          </div>
+        </Reveal>
+      </div>
+
+      {/* tabs */}
+      <div className="no-scrollbar overflow-x-auto -mx-6 md:mx-0 px-6 md:px-0">
+        <div className="flex items-baseline gap-6 md:gap-12 border-b border-paper/10 pb-3 mb-10 md:mb-16 min-w-max">
+          {tabs.map(t => (
+            <button key={t.id}
+                    onClick={() => setActive(t.id)}
+                    className={`relative font-display uppercase text-3xl md:text-5xl leading-none transition-colors ${active === t.id ? 'text-paper tab-active' : 'text-mute hover:text-paper'}`}>
+              {t.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* tab content */}
+      {active === 'poutines' && (
+        <div key="poutines">
+          <SubSection title="Les Incontournables" tag="P/petite · G/grande" ribbonVariant="a">
+            <ul>
+              {POUTINES_INCONTOURNABLES.map((it, i) => (
+                <MenuRow key={it.name} item={it} idx={i} photoLabel={`Plated — ${it.name.toLowerCase()}`} />
+              ))}
+            </ul>
+          </SubSection>
+
+          <SubSection title="Les Extravagantes" tag="P 17.40 · G 21.74" ribbonVariant="b">
+            <ul>
+              {POUTINES_EXTRA.map((it, i) => (
+                <MenuRow key={it.name} item={it} idx={i} photoLabel={`Plated — ${it.name.toLowerCase()}`} />
+              ))}
+            </ul>
+          </SubSection>
+        </div>
+      )}
+
+      {active === 'ramens' && (
+        <div key="ramens">
+          <SubSection title="Ramens" tag="Bouillon mijoté 12 h" ribbonVariant="c">
+            <ul>
+              {RAMENS.map((it, i) => (
+                <MenuRow key={it.name} item={it} idx={i} photoLabel={`Bowl — ${it.name.toLowerCase()}`} />
+              ))}
+            </ul>
+          </SubSection>
+        </div>
+      )}
+
+      {active === 'subs' && (
+        <div key="subs">
+          <SubSection title="Subs, guédilles & cie." tag="Servi avec frites" ribbonVariant="a">
+            <ul>
+              {SUBS.map((it, i) => (
+                <MenuRow key={it.name} item={it} idx={i} photoLabel={`Plated — ${it.name.toLowerCase()}`} />
+              ))}
+            </ul>
+          </SubSection>
+        </div>
+      )}
+
+      <div className="mt-12 text-xs md:text-sm font-mono uppercase tracking-[0.2em] text-mute text-center">
+        Taxes non incluses · Options vegan & gluten-free disponibles
+      </div>
+    </section>
+  );
+}
+
+function SubSection({ title, tag, children, ribbonVariant = 'a' }) {
+  return (
+    <div className="mb-16 md:mb-24">
+      <div className="flex flex-wrap items-baseline justify-between gap-y-3 gap-x-4 mb-6 md:mb-10 border-t border-paper/10 pt-8">
+        <h3 className="font-display uppercase text-2xl md:text-3xl tracking-wider leading-none">
+          <Ribbon variant={ribbonVariant}>{title}</Ribbon>
+        </h3>
+        <span className="font-marker text-neon text-lg md:text-2xl">{tag}</span>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+/* -------------------- GALERIE (parallax feature) -------------------- */
+
+function Galerie() {
+  const [ref, inView] = useInView({ threshold: 0.05 });
+  const y = useScrollY();
+  const featureRef = useRef(null);
+  const [offset, setOffset] = useState(0);
+
+  useEffect(() => {
+    if (!featureRef.current) return;
+    const rect = featureRef.current.getBoundingClientRect();
+    const winH = window.innerHeight;
+    const progress = (winH - rect.top) / (winH + rect.height);
+    const clamped = Math.max(0, Math.min(1, progress));
+    setOffset((clamped - 0.5) * 80);
+  }, [y]);
+
+  return (
+    <section id="galerie" data-screen-label="05 Galerie" ref={ref} className="relative py-24 md:py-32 overflow-hidden">
+      <div className="max-w-[1400px] mx-auto px-6 md:px-12">
+        <Reveal><Eyebrow>03 — Galerie</Eyebrow></Reveal>
+        <Reveal delay={120}>
+          <h2 className="mt-5 mb-10 md:mb-16 font-display text-[14vw] md:text-[6.2vw] leading-[0.9] uppercase">
+            L&rsquo;<span className="text-neon text-glow">ambiance</span>.
+          </h2>
+        </Reveal>
+
+        <div className="grid grid-cols-12 grid-rows-[auto_auto] gap-3 md:gap-5">
+          <div ref={featureRef} className="col-span-12 md:col-span-7 row-span-2 gallery-tile overflow-hidden">
+            <div className="parallax" style={{ transform: `translateY(${offset}px)` }}>
+              <Photo label="Salle à manger — néon vert, mur graffiti" ratio="3/4" className="w-full" />
+            </div>
+          </div>
+          <div className="col-span-6 md:col-span-5 gallery-tile">
+            <Photo label="Bowl ramen au comptoir" ratio="4/3" />
+          </div>
+          <div className="col-span-6 md:col-span-5 gallery-tile">
+            <Photo label="Cuisine en action" ratio="4/3" />
+          </div>
+          <div className="col-span-4 md:col-span-3 gallery-tile">
+            <Photo label="Frite-fromage gros plan" ratio="1/1" />
+          </div>
+          <div className="col-span-4 md:col-span-2 gallery-tile">
+            <Photo label="Enseigne néon" ratio="1/1" />
+          </div>
+          <div className="col-span-4 md:col-span-2 gallery-tile">
+            <Photo label="Devanture rue" ratio="1/1" />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------- POURQUOI NOUS -------------------- */
+
+function Pourquoi() {
+  const stats = [
+    { num: '4,6', unit: '★ Google',         sub: '14 avis, tous authentiques.' },
+    { num: '12',  unit: 'min de Mirabel',   sub: '1000 Bd Lachapelle · Saint-Jérôme.' },
+    { num: 'VG·GF', unit: 'sur tout le menu', sub: 'Options vegan et sans gluten, sans compromis.' },
+  ];
+  return (
+    <section data-screen-label="06 Pourquoi" className="relative border-y border-paper/10 bg-[#0d0d0c] overflow-hidden">
+      <div className="section-bg-mid"></div>
+      <div className="absolute inset-0 grain pointer-events-none"></div>
+      <div className="relative max-w-[1400px] mx-auto px-6 md:px-12 py-20 md:py-28">
+        <Reveal><Eyebrow>04 — Pourquoi nous</Eyebrow></Reveal>
+        <div className="mt-10 md:mt-16 grid md:grid-cols-3 gap-12 md:gap-12">
+          {stats.map((s, i) => (
+            <Reveal key={s.num} delay={i * 140}>
+              <div className="md:border-l md:border-paper/10 md:pl-8 min-w-0">
+                <div className="flex items-baseline gap-3 flex-wrap">
+                  <div className="font-display text-[18vw] md:text-[5.2vw] leading-[0.85] uppercase text-neon text-glow whitespace-nowrap">
+                    {s.num}
+                  </div>
+                  <div className="font-mono text-[11px] md:text-xs uppercase tracking-[0.22em] text-paper/80 mb-1">
+                    {s.unit}
+                  </div>
+                </div>
+                <div className="mt-5 text-paper/85 text-base md:text-lg max-w-[26ch] leading-snug">{s.sub}</div>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------- REVIEWS -------------------- */
+
+function Reviews() {
+  const reviews = [
+    { quote: 'Belle place, bonne bouffe, staff extraordinaire et ambiance vraiment nice !!!!', who: 'K.', src: 'Google' },
+    { quote: 'Je vous recommande d\u2019essayer pour encourager ces nouveaux propriétaires.', who: 'Anon.', src: 'Google' },
+    { quote: 'Sauce maison qui goûte la vraie affaire. La cabane est obligatoire.', who: 'M-A. T.', src: 'Google' },
+  ];
+  return (
+    <section data-screen-label="07 Reviews" className="relative max-w-[1400px] mx-auto px-6 md:px-12 py-24 md:py-32">
+      <Reveal><Eyebrow>05 — Ce qu&rsquo;on dit de nous</Eyebrow></Reveal>
+      <Reveal delay={120}>
+        <h2 className="mt-5 mb-14 md:mb-20 font-display text-[14vw] md:text-[6.2vw] leading-[0.9] uppercase">
+          Le bouche-<wbr/>à-<wbr/><span className="text-neon text-glow">oreille</span>.
+        </h2>
+      </Reveal>
+
+      <div className="space-y-20 md:space-y-32">
+        {reviews.map((r, i) => (
+          <Reveal key={i} delay={i * 100}>
+            <blockquote className="quote-bar pl-6 md:pl-12 py-4 md:py-6 max-w-4xl">
+              <p className="italic font-display font-normal text-3xl md:text-5xl leading-[1.35] md:leading-[1.3] text-paper/95">
+                &ldquo;{r.quote}&rdquo;
+              </p>
+              <footer className="mt-8 md:mt-10 font-mono uppercase text-xs tracking-[0.22em] text-mute">
+                — {r.who} <span className="text-paper/30">·</span> <span className="text-neon">{r.src}</span>
+              </footer>
+            </blockquote>
+          </Reveal>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* -------------------- VISITE-NOUS -------------------- */
+
+function Visite() {
+  const hours = [
+    ['Lun', '11h — 21h'],
+    ['Mar', '11h — 21h'],
+    ['Mer', '11h — 21h'],
+    ['Jeu', '11h — 21h'],
+    ['Ven', '11h — 23h'],
+    ['Sam', '11h — 23h'],
+    ['Dim', '11h — 21h'],
+  ];
+  return (
+    <section id="visite" data-screen-label="08 Visite" className="relative max-w-[1400px] mx-auto px-6 md:px-12 py-24 md:py-32">
+      <Reveal><Eyebrow>06 — Visite-nous</Eyebrow></Reveal>
+      <Reveal delay={120}>
+        <h2 className="mt-5 mb-12 md:mb-20 font-display text-[14vw] md:text-[6.2vw] leading-[0.9] uppercase">
+          Viens jaser. <span className="text-neon text-glow italic">Viens manger.</span>
+        </h2>
+      </Reveal>
+
+      <div className="grid md:grid-cols-[1.2fr_1fr] gap-10 md:gap-16">
+        <Reveal>
+          <FakeMap />
+        </Reveal>
+
+        <Reveal delay={150}>
+          <div>
+            <div className="border-t border-paper/10 pt-6">
+              <div className="eyebrow">Adresse</div>
+              <div className="font-display uppercase text-2xl md:text-3xl mt-2 leading-tight">
+                1000 Bd Lachapelle<br/>
+                <span className="text-mute">Saint-Jérôme, QC</span>
+              </div>
+            </div>
+
+            <div className="border-t border-paper/10 mt-8 pt-6">
+              <div className="eyebrow">Horaire</div>
+              <ul className="mt-3 grid grid-cols-2 gap-x-8 gap-y-2 font-mono text-sm">
+                {hours.map(([d, h]) => (
+                  <li key={d} className="flex justify-between border-b border-paper/5 pb-2">
+                    <span className="text-mute uppercase tracking-[0.18em]">{d}</span>
+                    <span className="text-paper">{h}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="border-t border-paper/10 mt-8 pt-6 grid grid-cols-2 gap-6">
+              <div>
+                <div className="eyebrow">Téléphone</div>
+                <div className="mt-2 font-display text-2xl">450&nbsp;000&nbsp;0000</div>
+              </div>
+              <div>
+                <div className="eyebrow">Stationnement</div>
+                <div className="mt-2 text-paper/80 text-sm">Gratuit, à l&rsquo;arrière du bâtiment. Accès PMR.</div>
+              </div>
+            </div>
+
+            <a href="https://www.google.com/maps/search/?api=1&query=1000+Bd+Lachapelle+Saint-J%C3%A9r%C3%B4me" target="_blank" rel="noopener" className="mt-10 inline-block btn-neon px-8 py-4 font-display tracking-widest text-lg">
+              VIENS MANGER →
+            </a>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+function FakeMap() {
+  return (
+    <div className="relative overflow-hidden border border-paper/10" style={{ aspectRatio: '4/3' }}>
+      {/* fake grid streets */}
+      <div className="absolute inset-0"
+           style={{
+             background:
+               'linear-gradient(135deg, #0e0e0d 0%, #131311 100%)',
+           }}>
+      </div>
+      <div className="absolute inset-0 opacity-50"
+           style={{
+             backgroundImage:
+               'linear-gradient(to right, rgba(245,245,240,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(245,245,240,0.06) 1px, transparent 1px)',
+             backgroundSize: '48px 48px',
+           }}>
+      </div>
+      {/* curved road */}
+      <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 300" preserveAspectRatio="none">
+        <path d="M -10,180 C 80,160 140,220 230,160 S 380,80 420,90"
+              stroke="rgba(245,245,240,0.20)" strokeWidth="14" fill="none" />
+        <path d="M -10,180 C 80,160 140,220 230,160 S 380,80 420,90"
+              stroke="rgba(245,245,240,0.05)" strokeWidth="1" strokeDasharray="6 8" fill="none" />
+        <path d="M 80,-10 C 120,80 200,120 220,210 S 250,310 240,320"
+              stroke="rgba(245,245,240,0.14)" strokeWidth="8" fill="none" />
+      </svg>
+
+      {/* pulse pin */}
+      <div className="absolute" style={{ left: '52%', top: '46%' }}>
+        <div className="relative">
+          <div className="absolute inset-0 -m-6 rounded-full bg-neon/15 animate-ping"></div>
+          <svg width="44" height="56" viewBox="0 0 44 56" className="relative">
+            <path d="M22 4 C 11 4 4 12 4 22 C 4 36 22 52 22 52 C 22 52 40 36 40 22 C 40 12 33 4 22 4 Z"
+                  fill="#A8FF35" stroke="#0A0A0A" strokeWidth="1.5" />
+            <circle cx="22" cy="22" r="6" fill="#0A0A0A" />
+          </svg>
+        </div>
+      </div>
+
+      {/* overlay address */}
+      <div className="absolute left-4 bottom-4 right-4 md:left-6 md:bottom-6 bg-ink/85 backdrop-blur-sm border border-paper/10 px-4 py-3">
+        <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-neon">Ici →</div>
+        <div className="font-display uppercase text-lg md:text-xl leading-tight mt-1">1000 Bd Lachapelle, St-Jérôme</div>
+      </div>
+
+      {/* corner mono */}
+      <div className="absolute top-3 right-3 font-mono text-[10px] uppercase tracking-[0.22em] text-mute">
+        45.78° N · 74.00° O
+      </div>
+    </div>
+  );
+}
+
+/* -------------------- FOOTER -------------------- */
+
+function Footer() {
+  return (
+    <footer className="relative border-t border-paper/10 mt-8 overflow-hidden">
+      <div className="footer-bg"></div>
+      <div className="absolute inset-0 grain pointer-events-none"></div>
+      <div className="relative max-w-[1400px] mx-auto px-6 md:px-12 pt-20 pb-10">
+        <div className="font-display uppercase leading-[0.85] text-[14vw] md:text-[10vw] text-paper/95">
+          LE<span className="text-neon text-glow">POUTINE</span>FEST
+          <span className="block text-outline">RAMEN T FEST</span>
+        </div>
+
+        <div className="mt-12 md:mt-16 grid md:grid-cols-3 gap-10 border-t border-paper/10 pt-10">
+          <div>
+            <div className="eyebrow">Suis-nous</div>
+            <div className="mt-3 flex items-center gap-4">
+              <SocialIcon kind="ig" />
+              <SocialIcon kind="fb" />
+              <SocialIcon kind="tt" />
+            </div>
+          </div>
+          <div>
+            <div className="eyebrow">Adresse</div>
+            <div className="mt-3 text-paper/85">1000 Bd Lachapelle<br/>Saint-Jérôme, QC</div>
+          </div>
+          <div>
+            <div className="eyebrow">Contact</div>
+            <div className="mt-3 text-paper/85">450&nbsp;000&nbsp;0000<br/>bonjour@lepoutinefest.ca</div>
+          </div>
+        </div>
+
+        <div className="mt-12 flex flex-col md:flex-row md:items-center md:justify-between gap-3 font-mono text-[11px] uppercase tracking-[0.2em] text-mute">
+          <div>© 2026 LePoutineFest et Ramen T Fest · Saint-Jérôme</div>
+          <div>Site par <span className="text-paper">Nord Studio</span> · nordstudio.io</div>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+function SocialIcon({ kind }) {
+  const common = 'w-10 h-10 grid place-items-center border border-paper/20 hover:border-neon hover:text-neon transition-colors text-paper';
+  if (kind === 'ig') return (
+    <a href="#" className={common} aria-label="Instagram">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+        <rect x="3" y="3" width="18" height="18" rx="5" />
+        <circle cx="12" cy="12" r="4" />
+        <circle cx="17.5" cy="6.5" r="1" fill="currentColor" />
+      </svg>
+    </a>
+  );
+  if (kind === 'fb') return (
+    <a href="#" className={common} aria-label="Facebook">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M13 22v-8h3l1-4h-4V7.5c0-1.1.4-2 2-2h2V2.1C16.5 2 15.3 2 14 2c-2.8 0-5 1.7-5 5v3H6v4h3v8h4z"/>
+      </svg>
+    </a>
+  );
+  return (
+    <a href="#" className={common} aria-label="TikTok">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M14 3v10.5a3.5 3.5 0 1 1-3.5-3.5h.5V7a6.5 6.5 0 1 0 6.5 6.5V8.3A7.6 7.6 0 0 0 22 9.6V6.2A4.6 4.6 0 0 1 17.7 3H14z"/>
+      </svg>
+    </a>
+  );
+}
+
+/* -------------------- ROOT -------------------- */
+
+function App() {
+  return (
+    <main className="relative">
+      <Hero />
+      <HairlineDivider />
+      <StickyBar />
+      <Histoire />
+      <MenuTabs />
+      <Galerie />
+      <Pourquoi />
+      <Reviews />
+      <Visite />
+      <Footer />
+    </main>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

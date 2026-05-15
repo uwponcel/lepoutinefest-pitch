@@ -1,0 +1,11 @@
+# Railway / Nixpacks build config
+# Static site served via `serve` package, bound to $PORT.
+
+[phases.setup]
+nixPkgs = ["nodejs_20"]
+
+[phases.install]
+cmds = ["npm install --omit=dev=false"]
+
+[start]
+cmd = "npm start"
