@@ -213,6 +213,59 @@
   /* rotate display badge */
   .badge-rot { transform: rotate(-7deg); }
 
+  /* ── Hero neon sign ──────────────────────────────────────────
+     Hollow-stroke text + layered glow shadows mimic a real
+     neon tube. Subtle flicker on a 4.5 s cycle for punk-diner
+     authenticity (real signs blink — perfect signs read fake). */
+  .neon-sign {
+    -webkit-text-stroke: 2px #A8FF35;
+            text-stroke: 2px #A8FF35;
+    color: transparent;
+    text-shadow:
+      0 0 4px #A8FF35,
+      0 0 12px #A8FF35,
+      0 0 28px rgba(168, 255, 53, 0.7),
+      0 0 56px rgba(168, 255, 53, 0.35);
+    animation: neonFlicker 4.5s ease-in-out infinite;
+  }
+  @keyframes neonFlicker {
+    0%, 4%, 8%, 100% { opacity: 1; }
+    2%               { opacity: 0.55; }
+    6%               { opacity: 0.75; }
+    50%, 53%         { opacity: 1; }
+    51%              { opacity: 0.6; }
+    52%              { opacity: 0.95; }
+  }
+  .neon-sign__rule {
+    height: 1px;
+    background: #A8FF35;
+    box-shadow: 0 0 8px #A8FF35, 0 0 16px rgba(168, 255, 53, 0.6);
+  }
+
+  /* ── Punk rock-horns sign ──────────────────────────────────
+     Hand silhouette PNG used as a CSS mask over a neon-green
+     box. Lets us tint the chalk-drawn hand any color we want
+     without baking it into the source asset. Drop-shadow gives
+     the tube-glow halo. Flicker offset from OUVERT so the two
+     blink out of sync — more authentic than synchronized blinks. */
+  .rock-sign {
+    display: inline-block;
+    background: #A8FF35;
+    -webkit-mask-image: url('./assets/rock-horns.png');
+            mask-image: url('./assets/rock-horns.png');
+    -webkit-mask-size: contain;
+            mask-size: contain;
+    -webkit-mask-position: center;
+            mask-position: center;
+    -webkit-mask-repeat: no-repeat;
+            mask-repeat: no-repeat;
+    filter:
+      drop-shadow(0 0 4px #A8FF35)
+      drop-shadow(0 0 12px #A8FF35)
+      drop-shadow(0 0 26px rgba(168, 255, 53, 0.55));
+    animation: neonFlicker 5.7s ease-in-out infinite 1.8s;
+  }
+
   /* ── graffiti ribbons / splash backgrounds ────────────────────
      Uses an SVG turbulence + displacement filter (defined inline
      in #graf-defs at the document root) to give a green rectangle
@@ -506,13 +559,36 @@ function Hero({ onTriggerHairline }) {
 
   // letter stagger using mount delay
   return (
-    <section data-screen-label="01 Hero" className="relative min-h-screen overflow-hidden grain">
+    <section data-screen-label="01 Hero" className="relative min-h-screen overflow-hidden grain flex flex-col">
       <div className="hero-bg"></div>
       <div className="hero-glow"></div>
       <div className="hero-glow-2"></div>
 
+      {/* Punk neon sign — hollow-stroke "ouvert" + layered glow +
+          flicker. Visible on both viewports; sized down on mobile
+          so it doesn't fight the headline. */}
+      <div className="absolute top-20 right-4 md:top-28 md:right-10 lg:right-20 z-10 rotate-[-7deg] pointer-events-none select-none">
+        <div className="font-marker neon-sign text-3xl md:text-5xl lg:text-6xl tracking-wider leading-none">
+          ouvert
+        </div>
+        <div className="hidden md:flex items-center justify-center gap-2 mt-3 font-mono text-[10px] tracking-[0.32em] text-neon/90">
+          <span className="neon-sign__rule flex-1 max-w-[36px]"></span>
+          <span>FRESH</span>
+          <span className="neon-sign__rule flex-1 max-w-[36px]"></span>
+        </div>
+      </div>
+
+      {/* Rockstar horns sign — opposite corner from OUVERT. Masked
+          silhouette tinted neon, flickers out of sync. Visible on
+          mobile; sized to balance OUVERT without clobbering the
+          headline. */}
+      <div className="absolute bottom-24 left-3 md:bottom-32 md:left-12 lg:left-20 z-10 rotate-[8deg] pointer-events-none select-none flex flex-col items-center">
+        <span className="rock-sign w-14 h-14 md:w-24 md:h-24 lg:w-28 lg:h-28"></span>
+        <span className="mt-2 font-mono text-[8px] md:text-[10px] tracking-[0.32em] text-neon/90">PUNK · FOOD</span>
+      </div>
+
       {/* top nav */}
-      <header className="relative z-10 max-w-[1400px] mx-auto px-6 md:px-12 pt-6 md:pt-8 flex items-center justify-between">
+      <header className="relative z-10 max-w-[1400px] mx-auto w-full px-6 md:px-12 pt-6 md:pt-8 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 bg-neon rotate-[-8deg] grid place-items-center">
             <span className="font-display text-ink text-lg leading-none translate-y-[1px]">P</span>
@@ -528,30 +604,30 @@ function Hero({ onTriggerHairline }) {
         </nav>
       </header>
 
-      <div className="relative z-10 max-w-[1400px] mx-auto px-6 md:px-12 pt-10 md:pt-20 pb-32">
-        <div className="font-mono text-xs tracking-[0.3em] text-neon mb-6 md:mb-10">EST. 2026 — ST-JÉRÔME, QC · OUVERT TOUS LES JOURS</div>
+      <div className="relative z-10 max-w-[1400px] mx-auto w-full px-5 md:px-12 my-auto md:my-0 pt-0 md:pt-20 pb-12 md:pb-32 text-center md:text-left">
+        <div className="font-mono text-[11px] md:text-xs tracking-[0.28em] md:tracking-[0.3em] text-neon mb-5 md:mb-10 leading-relaxed">EST. 2026 · ST-JÉRÔME, QC<br className="md:hidden" /><span className="hidden md:inline"> — </span><span className="md:hidden"> · </span>OUVERT TOUS LES JOURS</div>
 
-        <h1 className="font-display leading-[0.78] uppercase select-none">
+        <h1 className="font-display leading-[0.82] md:leading-[0.78] uppercase select-none">
           <StaggeredWord word={word1}
-            className="block text-[22vw] md:text-[15vw] text-neon text-glow"
+            className="block text-[28vw] md:text-[15vw] text-neon text-glow"
             rotateClass="rotate-[-3deg]"
           />
           <StaggeredWord word={word2}
-            className="block text-[22vw] md:text-[15vw] text-outline -mt-[2vw] md:-mt-[1vw]"
+            className="block text-[28vw] md:text-[15vw] text-outline -mt-[3vw] md:-mt-[1vw]"
             rotateClass="rotate-[2deg]"
             baseDelay={500}
           />
         </h1>
 
-        <div className="mt-6 md:mt-10 grid md:grid-cols-[1fr_auto] gap-8 items-end">
-          <Reveal delay={1200} className="max-w-xl">
+        <div className="mt-8 md:mt-10 grid md:grid-cols-[1fr_auto] gap-6 md:gap-8 items-center md:items-end">
+          <Reveal delay={1200} className="max-w-xl mx-auto md:mx-0">
             <p className="text-paper/90 text-lg md:text-2xl leading-snug">
               <span className="italic text-mute">Food truck-style.</span> Maintenant à St-Jérôme.
-              <span className="block mt-2 text-sm text-mute font-mono">Cinq ans dans les Laurentides. Une cuisine permanente.</span>
+              <span className="block mt-2 text-sm text-mute font-mono">Onze ans dans les Laurentides. Maintenant une cuisine permanente.</span>
             </p>
           </Reveal>
 
-          <Reveal delay={1400} className="flex flex-wrap items-center gap-3">
+          <Reveal delay={1400} className="flex flex-wrap items-center justify-center md:justify-start gap-3">
             <a href="#menu" className="btn-neon px-6 py-3 font-display tracking-widest text-base">VOIR LE MENU →</a>
             <a href="#visite" className="btn-ghost px-6 py-3 font-display tracking-widest text-base">NOUS TROUVER</a>
           </Reveal>
@@ -559,8 +635,8 @@ function Hero({ onTriggerHairline }) {
       </div>
 
       {/* mono strip */}
-      <div className="absolute bottom-6 left-0 right-0 z-10 px-6 md:px-12">
-        <div className="max-w-[1400px] mx-auto flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-[11px] md:text-xs tracking-[0.22em] uppercase text-mute">
+      <div className="absolute bottom-5 md:bottom-6 left-0 right-0 z-10 px-5 md:px-12">
+        <div className="max-w-[1400px] mx-auto flex flex-wrap items-center justify-center md:justify-start gap-x-4 md:gap-x-6 gap-y-2 font-mono text-[10px] md:text-xs tracking-[0.2em] md:tracking-[0.22em] uppercase text-mute text-center md:text-left">
           <span><span className="text-neon">●</span> 1000 Bd Lachapelle</span>
           <span className="text-paper/30">/</span>
           <span>Saint-Jérôme</span>
@@ -652,18 +728,19 @@ function Histoire() {
           </Reveal>
           <Reveal delay={300}>
             <p className="mt-8 max-w-xl text-lg md:text-xl text-paper/85 leading-relaxed">
-              On a roulé en food truck 5 ans partout dans les Laurentides.
-              En 2026, on a posé nos chaudrons pour de bon au 1000 Lachapelle.
-              <span className="text-neon"> Même équipe, même recette,</span> plus de bouffe.
+              Onze ans qu&rsquo;on roule dans les Laurentides. Un food truck en 2015,
+              deux aujourd&rsquo;hui. En 2026, on a posé nos chaudrons pour de bon
+              au 1000 Lachapelle.
+              <span className="text-neon"> On est une famille</span>, pis on veut que vous en fassiez partie.
             </p>
           </Reveal>
           <Reveal delay={450}>
             <div className="mt-10 flex items-center gap-6 font-mono text-xs uppercase tracking-[0.18em] text-mute">
-              <span><span className="text-paper">5&nbsp;ans</span> en truck</span>
+              <span><span className="text-paper">11&nbsp;ans</span> de route</span>
               <span className="text-paper/20">·</span>
-              <span><span className="text-paper">2026</span> ouverture</span>
+              <span><span className="text-paper">2</span> food trucks</span>
               <span className="text-paper/20">·</span>
-              <span><span className="text-paper">3</span> familles</span>
+              <span><span className="text-paper">1</span> resto</span>
             </div>
           </Reveal>
         </div>
@@ -672,7 +749,7 @@ function Histoire() {
           <div className="graffiti-frame">
             <Photo label="PHOTO — équipe en cuisine / food truck d'origine" ratio="4/5" className="w-full" />
             <div className="absolute -bottom-6 -left-2 md:-left-6 font-marker text-neon text-xl md:text-2xl badge-rot select-none">
-              depuis 2021 ✶
+              depuis 2015 ✶
             </div>
           </div>
         </Reveal>
