@@ -4,7 +4,7 @@
   "private": true,
   "description": "Pitch mockup site for LePoutineFest et Ramen T Fest, Saint-Jérôme. Static single-page React + Babel via CDN — no build step.",
   "scripts": {
-    "dev": "serve . -l tcp://0.0.0.0:${PORT:-8082} --no-clipboard --single",
+    "dev": "serve . -l 8082 --no-clipboard --single",
     "start": "serve . -l tcp://0.0.0.0:${PORT:-3000} --no-clipboard --single"
   },
   "dependencies": {

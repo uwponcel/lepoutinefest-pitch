@@ -242,53 +242,6 @@
     box-shadow: 0 0 8px #A8FF35, 0 0 16px rgba(168, 255, 53, 0.6);
   }
 
-  /* ── Neon paint drips ───────────────────────────────────────
-     Scattered through the page as a "this site was just sprayed"
-     accent. Each drip is a thin line that scales from 0 → 1 on
-     the Y axis (top-anchored) so it visually falls. A teardrop
-     bulb sits at the bottom for gravity weight. Variants tune
-     length (--drip-h), delay (--drip-delay), and width via
-     inline style props. */
-  .drip {
-    position: absolute;
-    width: 5px;
-    height: var(--drip-h, 60px);
-    pointer-events: none;
-    z-index: 4;
-    transform: scaleY(0);
-    transform-origin: top center;
-    animation: dripFall 1.5s cubic-bezier(0.42, 0, 0.45, 1) forwards;
-    animation-delay: var(--drip-delay, 0s);
-  }
-  .drip__line {
-    display: block;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(to bottom, #A8FF35 0%, #A8FF35 80%, rgba(168,255,53,0) 100%);
-    box-shadow: 0 0 8px rgba(168, 255, 53, 0.55);
-  }
-  .drip__bulb {
-    display: block;
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 13px;
-    height: 16px;
-    border-radius: 50% 50% 45% 45% / 55% 55% 40% 40%;
-    background: #A8FF35;
-    box-shadow: 0 0 12px rgba(168, 255, 53, 0.65);
-  }
-  @keyframes dripFall {
-    0%   { transform: scaleY(0); }
-    85%  { transform: scaleY(1.04); }
-    100% { transform: scaleY(1); }
-  }
-  /* Thin variant for delicate accents */
-  .drip--thin       { width: 3px; }
-  .drip--thin .drip__bulb { width: 10px; height: 13px; bottom: -8px; }
-  .drip--thin .drip__line { background: linear-gradient(to bottom, #A8FF35 0%, #A8FF35 75%, rgba(168,255,53,0) 100%); }
-
   /* ── Punk rock-horns sign ──────────────────────────────────
      Hand silhouette PNG used as a CSS mask over a neon-green
      box. Lets us tint the chalk-drawn hand any color we want
@@ -598,32 +551,6 @@ function BrushUnderline({ children, className = '' }) {
   return <span className={`brush-underline ${className}`}>{children}</span>;
 }
 
-/* Neon paint drip — falls from its anchor point when the drip
-   enters the viewport. Props: position (top/right/left/bottom),
-   `h` length in px (default 60), `delay` ms (default 0),
-   `thin` for slimmer variant. Animation stays paused until
-   IntersectionObserver fires so off-screen drips don't waste
-   their reveal silently below the fold. */
-function Drip({ top, right, bottom, left, h = 60, delay = 0, thin = false }) {
-  const [ref, inView] = useInView({ threshold: 0.01 });
-  return (
-    <span
-      ref={ref}
-      className={`drip${thin ? ' drip--thin' : ''}`}
-      style={{
-        top, right, bottom, left,
-        '--drip-h': `${h}px`,
-        '--drip-delay': `${delay}ms`,
-        animationPlayState: inView ? 'running' : 'paused',
-      }}
-      aria-hidden="true"
-    >
-      <span className="drip__line"></span>
-      <span className="drip__bulb"></span>
-    </span>
-  );
-}
-
 /* -------------------- HERO -------------------- */
 
 function Hero({ onTriggerHairline }) {
@@ -656,12 +583,6 @@ function Hero({ onTriggerHairline }) {
       <div className="absolute bottom-24 left-3 md:bottom-32 md:left-12 lg:left-20 z-10 rotate-[8deg] pointer-events-none select-none">
         <span className="rock-sign block w-14 h-14 md:w-24 md:h-24 lg:w-28 lg:h-28"></span>
       </div>
-
-      {/* Paint drips falling from the top of the hero on initial load */}
-      <Drip top="0" left="9%"  h={90}  delay={400} />
-      <Drip top="0" left="38%" h={140} delay={700} />
-      <Drip top="0" left="72%" h={65}  delay={1100} thin />
-      <Drip top="0" right="14%" h={110} delay={950} />
 
       {/* top nav */}
       <header className="relative z-10 max-w-[1400px] mx-auto w-full px-6 md:px-12 pt-6 md:pt-8 flex items-center justify-between">
@@ -792,8 +713,6 @@ function StickyBar() {
 function Histoire() {
   return (
     <section id="histoire" data-screen-label="03 Histoire" className="relative max-w-[1400px] mx-auto px-6 md:px-12 py-24 md:py-36">
-      <Drip top="0" left="22%" h={70} />
-      <Drip top="0" right="8%" h={100} delay={200} thin />
       <div className="grid md:grid-cols-[1.05fr_1fr] gap-12 md:gap-32 lg:gap-40 items-center">
         <div className="md:pr-4">
           <Reveal><Eyebrow>01 — Notre histoire</Eyebrow></Reveal>
@@ -899,8 +818,6 @@ function MenuTabs() {
 
   return (
     <section id="menu" data-screen-label="04 Menu" className="relative max-w-[1400px] mx-auto px-6 md:px-12 py-24 md:py-32">
-      <Drip top="0" left="14%" h={85} />
-      <Drip top="0" right="22%" h={55} delay={250} thin />
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10 md:mb-16">
         <div>
           <Reveal><Eyebrow>02 — Le menu</Eyebrow></Reveal>
@@ -1036,8 +953,6 @@ function Galerie() {
 
   return (
     <section id="galerie" data-screen-label="05 Galerie" ref={ref} className="relative py-24 md:py-32 overflow-hidden">
-      <Drip top="0" left="46%" h={120} thin />
-      <Drip top="0" right="6%" h={75} delay={300} />
       <div className="max-w-[1400px] mx-auto px-6 md:px-12">
         <Reveal><Eyebrow>03 — Galerie</Eyebrow></Reveal>
         <Reveal delay={120}>
@@ -1085,9 +1000,6 @@ function Pourquoi() {
     <section data-screen-label="06 Pourquoi" className="relative border-y border-paper/10 bg-[#0d0d0c] overflow-hidden">
       <div className="section-bg-mid"></div>
       <div className="absolute inset-0 grain pointer-events-none"></div>
-      <Drip top="0" left="18%" h={95} />
-      <Drip top="0" left="68%" h={60} delay={200} thin />
-      <Drip top="0" right="11%" h={130} delay={400} />
       <div className="relative max-w-[1400px] mx-auto px-6 md:px-12 py-20 md:py-28">
         <Reveal><Eyebrow>04 — Pourquoi nous</Eyebrow></Reveal>
         <div className="mt-10 md:mt-16 grid md:grid-cols-3 gap-12 md:gap-12">
@@ -1161,8 +1073,6 @@ function Visite() {
   ];
   return (
     <section id="visite" data-screen-label="08 Visite" className="relative max-w-[1400px] mx-auto px-6 md:px-12 py-24 md:py-32">
-      <Drip top="0" left="32%" h={90} />
-      <Drip top="0" right="14%" h={70} delay={250} thin />
       <Reveal><Eyebrow>06 — Visite-nous</Eyebrow></Reveal>
       <Reveal delay={120}>
         <h2 className="mt-5 mb-12 md:mb-20 font-display text-[14vw] md:text-[6.2vw] leading-[0.9] uppercase">
@@ -1278,9 +1188,6 @@ function Footer() {
     <footer className="relative border-t border-paper/10 mt-8 overflow-hidden">
       <div className="footer-bg"></div>
       <div className="absolute inset-0 grain pointer-events-none"></div>
-      <Drip top="0" left="12%" h={85} />
-      <Drip top="0" left="58%" h={140} delay={300} />
-      <Drip top="0" right="20%" h={65} delay={500} thin />
       <div className="relative max-w-[1400px] mx-auto px-6 md:px-12 pt-20 pb-10">
         <div className="font-display uppercase leading-[0.85] text-[14vw] md:text-[10vw] text-paper/95">
           LE<span className="text-neon text-glow">POUTINE</span>FEST
